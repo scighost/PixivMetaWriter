@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using PixivMetaWriter;
-using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
@@ -17,18 +16,21 @@ namespace ConsoleApp1
             Console.CursorVisible = false;//隐藏光标，好看！
             List<FileInfo> files = FileOperation.GetMatchFiles(dirPath);//获取匹配条件的文件列表
             Console.WriteLine("匹配到符合条件的文件{0}个，开始写入信息……", files.Count);
-            int progressNum = 0;//任务进度
-            int successNum = 0;//成功数
 
-            Parallel.ForEach(files, (file) =>
+            foreach (FileInfo file in files)
             {
+                //显示进度
+                Console.SetCursorPosition(0, Console.CursorTop);//光标位置
+                Console.ForegroundColor = ConsoleColor.DarkBlue;//文字颜色
+                Console.Write(" {0} / {1}", files.IndexOf(file) + 1, files.Count);
+
                 Match match = Regex.Match(file.Name, "[0-9]+_p[0-9]+");//匹配 pid_page
                 string pid_page = match.Value;
                 try
                 {
                     PixivInfo pixivInfo = new PixivInfo(pid_page);//获取作品信息
                     FileOperation.ChangeInfo(file, pixivInfo);//文件操作
-                    successNum++;//成功
+                    //FileOperation.PrintInfo(pixivInfo);
                 }
                 catch (Exception ex)
                 {
@@ -39,27 +41,17 @@ namespace ConsoleApp1
                     {
                         file.CopyTo(file.DirectoryName + $"\\[!404] [{pid_page}]" + file.Extension, true);//404
                     }
+                    continue;
                 }
-                progressNum++;
-                PrintProgress(progressNum, files.Count);
-            });
+            }
 
             Console.SetCursorPosition(0, Console.CursorTop);
             Console.ForegroundColor = ConsoleColor.DarkBlue;
-            if ((files.Count-successNum)==0)
-                Console.WriteLine("任务完成，任意键退出");
+            if (Directory.Exists(dirPath + "\\failure"))
+                Console.WriteLine("任务完成，失败文件已复制到\"failure\"文件夹下，任意键退出");
             else
-                Console.WriteLine("失败文件{0}个已复制到\"failure\"文件夹下，任意键退出",files.Count-successNum);
+                Console.WriteLine("任务完成，任意键退出");
             Console.ReadKey();
-        }
-
-        private static void PrintProgress(int progressNum, int count)
-        {
-            Console.SetCursorPosition(0, Console.CursorTop);//光标位置
-            Console.ForegroundColor = ConsoleColor.DarkBlue;//文字颜色
-            Console.Write(new string(' ', $" {progressNum} / {count}".Length * 3));//空白字符
-            Console.SetCursorPosition(0, Console.CursorTop);//返回行首
-            Console.Write(" {0} / {1}", progressNum, count);//显示进度
         }
 
         //程序介绍
@@ -86,7 +78,7 @@ namespace ConsoleApp1
                 if (dirPath == "")
                 {
                     i = 5;//输入回车退出
-                }              
+                }
                 switch (i)
                 {
                     case 1:
@@ -114,7 +106,5 @@ namespace ConsoleApp1
             }
             return dirPath;
         }
-
-
     }
 }
