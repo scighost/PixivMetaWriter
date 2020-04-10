@@ -258,10 +258,11 @@ class PixivInfo
         metadata.Comment = Intro;
         metadata.DateTaken = Date;
         metadata.Keywords = Tags.AsReadOnly();
-        metadata.Rating = SetRating();
+        //metadata.Rating = SetRating();
         return metadata;
     }
 
+    /*
     int SetRating()//TODO 根据浏览点赞收藏数设定分级
     {
         int rating;
@@ -280,4 +281,5 @@ class PixivInfo
             rating = 0;//不分级
         return rating;
     }
+    */
 }
