@@ -65,7 +65,7 @@ namespace ConsoleApp1
         //程序介绍
         private static void PrintIntro()
         {
-            string intro = "PixivMetaWriter\nVersion 0.1.1 (又不是不能用版v2)   Author:Scighost\n\n";
+            string intro = "PixivMetaWriter\nVersion 0.1.0 (又不是不能用版)   Author:Scighost\n\n";
             //intro += "本程序功能简陋，限制颇高，单线操作，等待难熬，源码难读，修改不好，如何评价？粗制滥造！\n\n";
             intro += "文件名必须以“pid_page”命名，如“44873217_p0.jpg”；只支持jpg和png格式；";
             //intro += "程序将写入以下元数据：{标题(作品名)，作者(画师名)，日期时间(上传时间)，关键字(作品标签)，备注(作品介绍)}，作品标签包含日文原文和中文翻译；";
