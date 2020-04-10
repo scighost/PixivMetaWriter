@@ -25,3 +25,8 @@ Double click "PixivMetaWriter.exe", then input directory path.
 - Only support jpg and png.
 - Png file will save as JPEG.
 - Converting-failure files will be copied to "\failure".
+
+### Change Log
+
+- **2020-04-10**	Add parallel operation.
+- **2020-04-09**	First commit.
