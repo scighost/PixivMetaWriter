@@ -1,4 +1,4 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Text.RegularExpressions;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ namespace ConsoleApp1
         {
             PrintIntro();//软件介绍
             String dirPath = ScanDirpath();//获取文件夹路径
-            Console.CursorVisible = false;//隐藏光标，好看！
+            Console.CursorVisible = false;//隐藏光标，好看
             List<FileInfo> files = FileOperation.GetMatchFiles(dirPath);//获取匹配条件的文件列表
             Console.WriteLine("匹配到符合条件的文件{0}个，开始写入信息……", files.Count);
             int progressNum = 0;//任务进度
