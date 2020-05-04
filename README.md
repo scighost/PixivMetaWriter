@@ -4,6 +4,8 @@
 
 A tool for writing metadata from pixiv information especially tag.
 
+最新的可执行文件在“\ConsoleVer\History Releases”文件夹下。
+
 简体中文 | [English](README.en.md)
 
 ### 有哪些功能
@@ -23,15 +25,17 @@ A tool for writing metadata from pixiv information especially tag.
 
 ### 要注意什么
 
+- 原文件会删除
 - 文件必须以“44873217_p0.jpg”的格式命名
 - 仅支持jpg和png文件
-- png文件会以JPEG编码方式保存
+- png文件会以JPEG编码方式保存，但会复制原文件到“\png”文件夹下
 - 转换失败的文件会复制到“\failure”文件夹下
 
 ### 更新记录
 
-- **2020-04-10**	添加并行操作
-- **2020-04-09**	首次提交
+- **v0.1.2**  任务完成后可重复失败项
+- **v0.1.1**	添加并行操作
+- **v0.1.0**	首次提交
 
 ### 瞎扯淡
 

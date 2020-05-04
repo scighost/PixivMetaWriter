@@ -13,44 +13,76 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
             PrintIntro();//软件介绍
-            String dirPath = ScanDirpath();//获取文件夹路径
-            Console.CursorVisible = false;//隐藏光标，好看
-            List<FileInfo> files = FileOperation.GetMatchFiles(dirPath);//获取匹配条件的文件列表
-            Console.WriteLine("匹配到符合条件的文件{0}个，开始写入信息……", files.Count);
-            int progressNum = 0;//任务进度
-            int successNum = 0;//成功数
-
-            Parallel.ForEach(files, (file) =>
+            string  dirPath = ScanDirpath();//获取文件夹路径
+            string retry = "y";//重复失败项
+            for (int repeatTime = 0; retry == "y" || retry == "Y"; repeatTime++)
             {
-                Match match = Regex.Match(file.Name, "[0-9]+_p[0-9]+");//匹配 pid_page
-                string pid_page = match.Value;
-                try
+                Console.CursorVisible = false;//隐藏光标，好看
+                List<FileInfo> files;
+                if (repeatTime == 0)
                 {
-                    PixivInfo pixivInfo = new PixivInfo(pid_page);//获取作品信息
-                    FileOperation.ChangeInfo(file, pixivInfo);//文件操作
-                    successNum++;//成功
+                    files = FileOperation.GetMatchFiles(dirPath);//获取匹配条件的文件列表
+                    Console.WriteLine("匹配到符合条件的文件{0}个，开始写入信息……", files.Count);
                 }
-                catch (Exception ex)
+                else
                 {
-
-                    Directory.CreateDirectory(file.DirectoryName + "\\failure");//创建"\failure"文件夹
-                    file.CopyTo(file.DirectoryName + "\\failure\\" + file.Name, true);//写入失败的文件复制到"\failure"下
-                    if (ex.HResult == -2146233079)
+                    files = FileOperation.GetMatchFiles(dirPath+"failure");//获取匹配条件的文件列表
+                    Console.WriteLine("第{0}次重复……", repeatTime);
+                }
+                int progressNum = 0;//任务进度
+                int successNum = 0;//成功数
+                Parallel.ForEach(files, (file) =>
+                {
+                    Match match = Regex.Match(file.Name, "[0-9]+_p[0-9]+");//匹配 pid_page
+                    string pid_page = match.Value;
+                    try
                     {
-                        file.CopyTo(file.DirectoryName + $"\\[!404] [{pid_page}]" + file.Extension, true);//404
+                        PixivInfo pixivInfo = new PixivInfo(pid_page);//获取作品信息
+                        FileOperation.ChangeInfo(file, pixivInfo,dirPath);//文件操作
+                        successNum++;//成功
+                    }
+                    catch (Exception ex)
+                    {
+
+                        Directory.CreateDirectory(dirPath+"failure");//创建"\failure"文件夹
+                        if (ex.HResult == -2146233079)
+                        {
+                            file.CopyTo(dirPath + $"[!404] [{pid_page}]" + file.Extension, true);//404
+                        }
+                        if (repeatTime==0)
+                        {
+                            file.CopyTo(dirPath + "failure\\" + file.Name, true);//写入失败的文件复制到"\failure"下
+                            file.Delete();
+                        }
+                        
+                    }
+                    progressNum++;
+                    PrintProgress(progressNum, files.Count);
+                });
+
+                Console.SetCursorPosition(0, Console.CursorTop);
+                Console.ForegroundColor = ConsoleColor.DarkBlue;
+                Console.CursorVisible = true;
+                if ((files.Count - successNum) == 0)
+                {
+                    retry = "n";
+                    Console.WriteLine("任务完成，任意键退出");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    Console.WriteLine("失败文件{0}个已复制到\"failure\"文件夹下，是否重试(y/n)", files.Count - successNum);
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    retry = Console.ReadLine();
+                    if (retry != "y" && retry != "Y" && retry != "n" && retry != "N")
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkBlue;
+                        Console.WriteLine("除 y/n 之外的值也是退出哦");
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        retry = Console.ReadLine();
                     }
                 }
-                progressNum++;
-                PrintProgress(progressNum, files.Count);
-            });
-
-            Console.SetCursorPosition(0, Console.CursorTop);
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-            if ((files.Count-successNum)==0)
-                Console.WriteLine("任务完成，任意键退出");
-            else
-                Console.WriteLine("失败文件{0}个已复制到\"failure\"文件夹下，任意键退出",files.Count-successNum);
-            Console.ReadKey();
+            }
         }
 
         private static void PrintProgress(int progressNum, int count)
@@ -65,12 +97,13 @@ namespace ConsoleApp1
         //程序介绍
         private static void PrintIntro()
         {
-            string intro = "PixivMetaWriter\nVersion 0.1.1 (又不是不能用版v2)   Author:Scighost\n\n";
+            string intro = "PixivMetaWriter\nVersion 0.1.2    Author:Scighost\n\n";
             //intro += "本程序功能简陋，限制颇高，单线操作，等待难熬，源码难读，修改不好，如何评价？粗制滥造！\n\n";
             intro += "文件名必须以“pid_page”命名，如“44873217_p0.jpg”；只支持jpg和png格式；";
             //intro += "程序将写入以下元数据：{标题(作品名)，作者(画师名)，日期时间(上传时间)，关键字(作品标签)，备注(作品介绍)}，作品标签包含日文原文和中文翻译；";
-            intro += "原文件不会删除，新文件会以JPEG编码保存在相同目录下，命名格式：[user] title [pid_page].jpg，如[Anmi] 鵜飼い [44873217_p0].jpg。\n\n";
-            intro += "如果您觉得可以接受的话，那么请在下面输入文件夹的路径；不能接受?回车或右上角退出,自己改代码去。\n";
+            intro += "原文件将会删除，新文件以JPEG编码保存在相同目录下，命名格式：[user] title [pid_page].jpg，如[Anmi] 鵜飼い [44873217_p0].jpg。\n";
+            intro += "png格式的文件会复制到\\png下。\n\n";
+            intro += "如果您觉得可以接受的话，那么请在下面输入文件夹的路径；不能接受，回车退出。\n";
             intro += "PS. 系统代理，梯子自备。\n";
             Console.WriteLine(intro);
         }
@@ -112,6 +145,7 @@ namespace ConsoleApp1
                 Console.ForegroundColor = ConsoleColor.Black;
                 dirPath = Console.ReadLine();
             }
+            dirPath = dirPath.Substring(dirPath.Length-1,1) == "\\" ? dirPath : dirPath + "\\";
             return dirPath;
         }
     }

@@ -68,7 +68,7 @@ namespace PixivMetaWriter
         {
             var file = allInfo.FileInfo;
             var pixivInfo = allInfo.PixivInfo;
-            var metadata = = allInfo.PixivInfo.metadata;
+            var metadata = allInfo.PixivInfo.metadata;
             MemoryStream ms;//创建记忆流
                             //todo 重构
             try

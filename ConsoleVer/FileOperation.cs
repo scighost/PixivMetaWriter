@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
@@ -45,7 +44,7 @@ namespace PixivMetaWriter
         /// <param name="file">FileInfo</param>
         /// <param name="pixivInfo">PixivInfo</param>
         /// <returns>int 0</returns>
-        public static void ChangeInfo(FileInfo file, PixivInfo pixivInfo)
+        public static void ChangeInfo(FileInfo file, PixivInfo pixivInfo,string dirPath)
         {
             MemoryStream ms;//创建记忆流
 
@@ -76,14 +75,15 @@ namespace PixivMetaWriter
 
             try
             {
-                FileStream createStream = new FileStream(newFullName, FileMode.Create);//创建新文件流
+                FileStream createStream = new FileStream(dirPath+newName, FileMode.Create);//创建新文件流
                 encoder.Save(createStream);//保存新文件
                 createStream.Close();//关闭流
                 if (file.Extension==".png")
                 {
-                    Directory.CreateDirectory(file.DirectoryName + "\\png");//创建"\png"文件夹
-                    file.CopyTo(file.DirectoryName + "\\png\\" + file.Name, true);//png文件复制到"\png"下
+                    Directory.CreateDirectory(dirPath + "png");//创建"\png"文件夹
+                    file.CopyTo(dirPath + "png\\" + file.Name, true);//png文件复制到"\png"下
                 }
+                file.Delete();//删除原文件
             }
             catch (Exception ex)//写入异常
             {

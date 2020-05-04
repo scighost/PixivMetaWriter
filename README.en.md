@@ -2,6 +2,8 @@
 
 A tool for writing metadata from pixiv information especially tags.
 
+The last released file is in "\ConsoleVer\History Releases".
+
 [简体中文](README.md) | English
 
 ### Feature
@@ -21,12 +23,14 @@ Double click "PixivMetaWriter.exe", then input directory path.
 
 ### Attention
 
+- Original file will be deleted.
 - The file must be named in the format "44873217_p0.jpg".
 - Only support jpg and png.
-- Png file will save as JPEG.
+- Png file will save as JPEG, but will copy to "\png".
 - Converting-failure files will be copied to "\failure".
 
 ### Change Log
 
-- **2020-04-10**	Add parallel operation.
-- **2020-04-09**	First commit.
+- **v0.1.2**  Support repeat failure files after finish.
+- **v0.1.1**	Add parallel operation.
+- **v0.1.0**	First commit.
