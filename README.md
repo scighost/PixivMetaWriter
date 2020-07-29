@@ -2,9 +2,11 @@
 
 一个把pixiv作品信息作为元数据（标签）写入图片的小工具。
 
+**项目已并入[MyToolkit](https://github.com/scighost/MyToolkit)，本项目停止更新。**
+
 A tool for writing metadata from pixiv information especially tag.
 
-最新的可执行文件在“\ConsoleVer\History Releases”文件夹下。
+**The project has been merged into [MyToolkit](https://github.com/scighost/MyToolkit), and this project is no longer updated.**
 
 简体中文 | [English](README.en.md)
 

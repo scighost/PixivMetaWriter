@@ -2,7 +2,7 @@
 
 A tool for writing metadata from pixiv information especially tags.
 
-The last released file is in "\ConsoleVer\History Releases".
+**The project has been merged into [MyToolkit](https://github.com/scighost/MyToolkit), and this project is no longer updated.**
 
 [简体中文](README.md) | English
 
